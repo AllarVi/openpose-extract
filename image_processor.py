@@ -30,7 +30,10 @@ try:
 
     # Flags
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image_path", default="/Users/allarviinamae/Desktop/IMG_6656.jpeg",
+
+    image_to_process = "IMG_6656.jpeg"
+
+    parser.add_argument("--image_path", default=f"/Users/allarviinamae/Desktop/{image_to_process}",
                         help="Process an image. Read all standard formats (jpg, png, bmp, etc.).")
     args = parser.parse_known_args()
 
@@ -74,7 +77,7 @@ try:
 
     # Dump Image
     firstPersonKeypoints = datum.poseKeypoints.reshape((datum.poseKeypoints.shape[1], datum.poseKeypoints.shape[2]))
-    numpy.savetxt("foo.csv", firstPersonKeypoints, delimiter=",")
+    numpy.savetxt(f"image_keypoints/{image_to_process}.csv", firstPersonKeypoints, delimiter=",")
 except Exception as e:
     print(e)
     sys.exit(-1)
