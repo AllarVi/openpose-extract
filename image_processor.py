@@ -1,11 +1,13 @@
 # From Python
 # It requires OpenCV installed for Python
-import sys
-import cv2
-import os
-from sys import platform
 import argparse
-import numpy
+import os
+import sys
+from sys import platform
+
+import cv2
+
+from image_dumper import ImageDumper
 
 try:
     # Import Openpose (Windows/Ubuntu/OSX)
@@ -78,8 +80,9 @@ try:
     # cv2.waitKey(0)
 
     # Dump Image
-    firstPersonKeypoints = datum.poseKeypoints.reshape((datum.poseKeypoints.shape[1], datum.poseKeypoints.shape[2]))
-    numpy.savetxt(f"image_keypoints/{image_file_path}.csv", firstPersonKeypoints, delimiter=",")
+    image_dumper = ImageDumper(datum.poseKeypoints, image_file_path)
+    image_dumper.dump_image()
+
 except Exception as e:
     print(e)
     sys.exit(-1)
