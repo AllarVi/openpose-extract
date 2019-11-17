@@ -25,15 +25,16 @@ try:
             from openpose import pyopenpose as op
     except ImportError as e:
         print(
-            'Error: OpenPose library could not be found. Did you enable `BUILD_PYTHON` in CMake and have this Python script in the right folder?')
+            'Error: OpenPose library could not be found. Did you enable `BUILD_PYTHON` in CMake and have this Python '
+            'script in the right folder?')
         raise e
 
     # Flags
     parser = argparse.ArgumentParser()
 
-    image_to_process = "IMG_6656.jpeg"
+    image_file_path = "IMG_6656.jpeg"
 
-    parser.add_argument("--image_path", default=f"/Users/allarviinamae/Desktop/{image_to_process}",
+    parser.add_argument("--image_path", default=f"/Users/allarviinamae/Desktop/{image_file_path}",
                         help="Process an image. Read all standard formats (jpg, png, bmp, etc.).")
     args = parser.parse_known_args()
 
@@ -65,8 +66,9 @@ try:
     opWrapper.start()
 
     # Process Image
-    datum = op.Datum()
     imageToProcess = cv2.imread(args[0].image_path)
+
+    datum = op.Datum()
     datum.cvInputData = imageToProcess
     opWrapper.emplaceAndPop([datum])
 
@@ -77,7 +79,7 @@ try:
 
     # Dump Image
     firstPersonKeypoints = datum.poseKeypoints.reshape((datum.poseKeypoints.shape[1], datum.poseKeypoints.shape[2]))
-    numpy.savetxt(f"image_keypoints/{image_to_process}.csv", firstPersonKeypoints, delimiter=",")
+    numpy.savetxt(f"image_keypoints/{image_file_path}.csv", firstPersonKeypoints, delimiter=",")
 except Exception as e:
     print(e)
     sys.exit(-1)
