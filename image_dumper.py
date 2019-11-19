@@ -7,7 +7,11 @@ class ImageDumper:
         self.keypoints_file_name = keypoints_file_name
 
     def dump_image(self):
-        first_person_keypoints = self.pose_keypoints.reshape((self.pose_keypoints.shape[1],
-                                                              self.pose_keypoints.shape[2]))
+        (person_indices, x, y) = self.pose_keypoints.shape
 
-        numpy.savetxt(f"image_keypoints/{self.keypoints_file_name}.csv", first_person_keypoints, delimiter=",")
+        for person_idx in range(person_indices):
+            numpy.savetxt(f"image_keypoints/{self.keypoints_file_name}-{person_idx}.csv",
+                          self.pose_keypoints[person_idx],
+                          delimiter=",",
+                          header="x,y,c",
+                          comments='')

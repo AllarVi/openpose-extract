@@ -48,12 +48,8 @@ def main():
     frame_index = 0
 
     while True:
-
         retval, image = video_capture.read()
         frame_index = frame_index + 1
-
-        if frame_index == 10:
-            break
 
         if not retval:
             break
@@ -67,12 +63,15 @@ def main():
 
         # Print the human pose keypoints, i.e., a [#people x #keypoints x 3]-dimensional numpy object with the
         # keypoints of all the people on that image
-        # print(datum.poseKeypoints)
+        if len(datum.poseKeypoints.shape) == 0:
+            print("WARN! Pose keypoints not found! Skipping to next frame")
+            continue
+
         image_dumper = ImageDumper(datum.poseKeypoints, f"{video_to_process}-{frame_index}")
         image_dumper.dump_image()
 
         # Display the stream
-        cv2.imshow("OpenPose 1.5.1 - Tutorial Python API", datum.cvOutputData)
+        cv2.imshow("OpenPose - Python API", datum.cvOutputData)
         key = cv2.waitKey(1)
 
         if key == ord('q'):
