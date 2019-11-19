@@ -3,3 +3,5 @@
 venv/
 
 image_keypoints/*
+
+__pycache__/
