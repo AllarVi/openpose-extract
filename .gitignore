@@ -5,3 +5,5 @@ venv/
 image_keypoints/*
 
 __pycache__/
+
+logs/

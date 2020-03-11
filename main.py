@@ -4,6 +4,7 @@ import time
 import cv2
 
 from image_dumper import ImageDumper
+from logging_config import LoggingConfig
 
 
 def current_time_sec():
@@ -26,6 +27,8 @@ def get_params():
 
 
 def main():
+    LoggingConfig.setup()
+
     try:
         # Change these variables to point to the correct folder (Release/x64 etc.)
         # sys.path.append('../../python')
