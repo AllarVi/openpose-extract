@@ -2,7 +2,7 @@
 
 venv/
 
-image_keypoints/*
+output/*
 
 __pycache__/
 

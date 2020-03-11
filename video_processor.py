@@ -42,8 +42,8 @@ class VideoProcessor:
                 print("WARN! Pose keypoints not found! Skipping to next frame")
                 continue
 
-            image_dumper = ImageDumper(datum.poseKeypoints, f"{video_to_process}-{frame_index}")
-            image_dumper.dump_image()
+            image_dumper = ImageDumper(datum.poseKeypoints, video_to_process)
+            image_dumper.dump_image(frame_index)
 
             # Display the stream
             cv2.imshow("OpenPose - Python API", datum.cvOutputData)

@@ -1,3 +1,6 @@
+import logging
+
+from input_file_service import InputFileService
 from logging_config import LoggingConfig
 from video_processor import VideoProcessor
 
@@ -35,15 +38,20 @@ def main():
         raise e
 
     # Initializing Python OpenPose wrapper. Constructing OpenPose object allocates GPU memory
+    logging.info("Starting OpenPose Python Wrapper...")
     op_wrapper = op.WrapperPython()
     openpose_params = get_openpose_params()
     op_wrapper.configure(openpose_params)
     op_wrapper.start()
+    logging.info("OpenPose Python Wrapper started")
 
     # Opening OpenCV stream
-    video_to_process = 'backflip-1-allar.mov'
-
     video_processor = VideoProcessor(op_wrapper)
+
+    input_files_path = "/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips"
+    input_files = InputFileService.get_input_files(input_files_path)
+
+    video_to_process = 'backflip-1-allar.mov'
     video_processor.process(video_to_process)
 
 
