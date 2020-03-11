@@ -1,3 +1,5 @@
+import logging
+
 import numpy
 
 
@@ -7,6 +9,8 @@ class ImageDumper:
         self.keypoints_file_name = keypoints_file_name
 
     def dump_image(self):
+        logging.info("Dumping frame to file...")
+
         (person_indices, x, y) = self.pose_keypoints.shape
 
         for person_idx in range(person_indices):

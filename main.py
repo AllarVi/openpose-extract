@@ -1,17 +1,8 @@
-import logging
-import time
-
-import cv2
-
-from image_dumper import ImageDumper
 from logging_config import LoggingConfig
+from video_processor import VideoProcessor
 
 
-def current_time_sec():
-    return round(time.time(), 2)
-
-
-def get_params():
+def get_openpose_params():
     params = dict()
     # params["logging_level"] = 1
     # params["net_resolution"] = "-1x368" # default
@@ -43,60 +34,17 @@ def main():
             'script in the right folder?')
         raise e
 
-    params = get_params()
-
-    # Constructing OpenPose object allocates GPU memory
+    # Initializing Python OpenPose wrapper. Constructing OpenPose object allocates GPU memory
     op_wrapper = op.WrapperPython()
-    op_wrapper.configure(params)
+    openpose_params = get_openpose_params()
+    op_wrapper.configure(openpose_params)
     op_wrapper.start()
 
     # Opening OpenCV stream
     video_to_process = 'backflip-1-allar.mov'
-    video_capture = cv2.VideoCapture(
-        f'/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips/{video_to_process}')
 
-    frame_index = 0
-
-    while True:
-        start = current_time_sec()
-
-        retval, frame = video_capture.read()
-        frame_index = frame_index + 1
-
-        if not retval:
-            break
-
-        # Output keypoints and the image with the human skeleton blended on it
-        datum = op.Datum()
-        datum.cvInputData = frame
-
-        op_wrapper.emplaceAndPop([datum])
-        logging.info(f"Pose estimated for frame = {frame_index}")
-
-        # Print the human pose keypoints, i.e., a [#people x #keypoints x 3]-dimensional numpy object with the
-        # keypoints of all the people on that image
-        if len(datum.poseKeypoints.shape) == 0:
-            print("WARN! Pose keypoints not found! Skipping to next frame")
-            continue
-
-        image_dumper = ImageDumper(datum.poseKeypoints, f"{video_to_process}-{frame_index}")
-
-        logging.info("Dumping frame to file...")
-        image_dumper.dump_image()
-
-        # Display the stream
-        cv2.imshow("OpenPose - Python API", datum.cvOutputData)
-        key = cv2.waitKey(1)
-
-        if key == ord('q'):
-            break
-
-        stop = round(current_time_sec() - start, 2)
-        logging.info(f"Frame processing time {stop} seconds")
-
-    video_capture.release()
-
-    cv2.destroyAllWindows()
+    video_processor = VideoProcessor(op_wrapper)
+    video_processor.process(video_to_process)
 
 
 if __name__ == '__main__':
