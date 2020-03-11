@@ -14,8 +14,8 @@ class VideoProcessor:
         self.op_wrapper = op_wrapper
 
     def process(self, video_to_process):
-        video_capture = cv2.VideoCapture(
-            f'/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips/{video_to_process}')
+        logging.info(f"Starting processing of {video_to_process.split('/')[-1]}")
+        video_capture = cv2.VideoCapture(video_to_process)
 
         frame_index = 0
 
@@ -42,7 +42,8 @@ class VideoProcessor:
                 print("WARN! Pose keypoints not found! Skipping to next frame")
                 continue
 
-            image_dumper = ImageDumper(datum.poseKeypoints, video_to_process)
+            video_to_process_filename = video_to_process.split("/")[-1]  # extract filename
+            image_dumper = ImageDumper(datum.poseKeypoints, video_to_process_filename)
             image_dumper.dump_image(frame_index)
 
             # Display the stream

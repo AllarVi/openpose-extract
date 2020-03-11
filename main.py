@@ -50,9 +50,10 @@ def main():
 
     input_files_path = "/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips"
     input_files = InputFileService.get_input_files(input_files_path)
+    input_files.sort()
 
-    video_to_process = 'backflip-1-allar.mov'
-    video_processor.process(video_to_process)
+    for video_to_process in input_files:
+        video_processor.process(video_to_process)
 
 
 if __name__ == '__main__':
