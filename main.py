@@ -1,11 +1,13 @@
+import getopt
 import logging
+import sys
 
 from input_file_service import InputFileService
 from logging_config import LoggingConfig
 from video_processor import VideoProcessor
 
 
-def get_openpose_params():
+def get_openpose_params(model_folder):
     params = dict()
     # params["logging_level"] = 1
     # params["net_resolution"] = "-1x368" # default
@@ -16,12 +18,33 @@ def get_openpose_params():
     # params["render_threshold"] = 0.05
     # params["num_gpu_start"] = 0  # If GPU version is built, and multiple GPUs are available, set the ID here
     # params["disable_blending"] = False
-    params["model_folder"] = "/Users/allarviinamae/EduWorkspace/openpose/models"
+    params["model_folder"] = model_folder
     return params
 
 
-def main():
+def main(argv):
     LoggingConfig.setup()
+
+    input_files_path = "/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips"
+    op_models_path = "/Users/allarviinamae/EduWorkspace/openpose/models"
+
+    try:
+        opts, args = getopt.getopt(argv, "hi:m:", ["inputFilesPath=", "opModelsPath="])
+    except getopt.GetoptError:
+        logging.info('main.py -i <inputFilesPath> -m <opModelsPath>')
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            logging.info('main.py -i <inputFilesPath> -m <opModelsPath>')
+            sys.exit()
+        elif opt in ("-i", "--inputFilesPath"):
+            input_files_path = arg
+        elif opt in ("-m", "--opModelsPath"):
+            op_models_path = arg
+
+    logging.info(f'Input files path is {input_files_path}')
+    logging.info(f'OpenPose models path is {op_models_path}')
 
     try:
         # Change these variables to point to the correct folder (Release/x64 etc.)
@@ -32,7 +55,7 @@ def main():
         # '/usr/local/python')
         from openpose import pyopenpose as op
     except ImportError as e:
-        print(
+        logging.warn(
             'Error: OpenPose library could not be found. Did you enable `BUILD_PYTHON` in CMake and have this Python '
             'script in the right folder?')
         raise e
@@ -40,7 +63,7 @@ def main():
     # Initializing Python OpenPose wrapper. Constructing OpenPose object allocates GPU memory
     logging.info("Starting OpenPose Python Wrapper...")
     op_wrapper = op.WrapperPython()
-    openpose_params = get_openpose_params()
+    openpose_params = get_openpose_params(op_models_path)
     op_wrapper.configure(openpose_params)
     op_wrapper.start()
     logging.info("OpenPose Python Wrapper started")
@@ -48,7 +71,6 @@ def main():
     # Opening OpenCV stream
     video_processor = VideoProcessor(op_wrapper)
 
-    input_files_path = "/Users/allarviinamae/EduWorkspace/master-thesis-training-videos/backflips"
     input_files = InputFileService.get_input_files(input_files_path)
     input_files.sort()
 
@@ -57,4 +79,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

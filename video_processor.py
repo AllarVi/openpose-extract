@@ -14,7 +14,7 @@ class VideoProcessor:
         self.op_wrapper = op_wrapper
 
     def process(self, video_to_process):
-        logging.info(f"Starting processing of {video_to_process.split('/')[-1]}")
+        logging.info(f"Starting processing of {video_to_process.split('/')[-1]}...")
         video_capture = cv2.VideoCapture(video_to_process)
 
         frame_index = 0
