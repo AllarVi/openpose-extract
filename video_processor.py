@@ -9,9 +9,10 @@ from image_dumper import ImageDumper
 
 class VideoProcessor:
 
-    def __init__(self, op_wrapper) -> None:
+    def __init__(self, op_wrapper, show_video) -> None:
         super().__init__()
         self.op_wrapper = op_wrapper
+        self.show_video = show_video
 
     def process(self, video_to_process):
         logging.info(f"Starting processing of {video_to_process.split('/')[-1]}...")
@@ -47,11 +48,12 @@ class VideoProcessor:
             image_dumper.dump_image(frame_index)
 
             # Display the stream
-            cv2.imshow("OpenPose - Python API", datum.cvOutputData)
-            key = cv2.waitKey(1)
+            if self.show_video:
+                cv2.imshow("OpenPose - Python API", datum.cvOutputData)
+                key = cv2.waitKey(1)
 
-            if key == ord('q'):
-                break
+                if key == ord('q'):
+                    break
 
             stop = round(VideoProcessor.current_time_sec() - start, 2)
             logging.info(f"Frame processing time {stop} seconds")
